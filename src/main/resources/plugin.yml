@@ -10,7 +10,7 @@ commands:
   cheque:
     description: Comando principal do sistema de cheques
     aliases: [check, cheques]
-    usage: /<command> <criar|info> [argumentos]
+    usage: /<command> <criar|auto|info> [argumentos]
     permission: serverchecks.use
 
 permissions:

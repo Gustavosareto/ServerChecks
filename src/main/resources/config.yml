@@ -72,7 +72,12 @@ messages:
   
   # Uso dos comandos
   usage-criar: "&cUso: /cheque criar <valor> [mensagem]"
-  usage-main: "&cUso: /cheque <criar|info>"
+  usage-auto: "&cUso: /cheque auto [baixo|medio|alto|muito|<multiplicador>x]"
+  usage-main: "&cUso: /cheque <criar|auto|info>"
+  
+  # Cheque automático
+  cheque-auto-created: "&aCheque criado automaticamente! &2%value% &7(%mode% da média: %average%)"
+  invalid-multiplier: "&cMultiplicador inválido! Use um número positivo."
 
 # Formato do cheque
 cheque-format:
@@ -84,8 +89,7 @@ cheque-format:
     - "&eValor: &a%value%"
     - "&eEmitido por: &f%player%"
     - "&eData: &7%date%"
-    - "%message%"
     - "&7━━━━━━━━━━━━━━━━━━"
     - "&7Clique com botão direito para resgatar"
   # Formato da linha de mensagem (deixe vazio se não houver mensagem)
-  message-format: "&e&oMensagem: &f&o%message%"
+  message-format: ""

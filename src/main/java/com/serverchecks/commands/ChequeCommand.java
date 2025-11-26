@@ -27,8 +27,16 @@ public class ChequeCommand implements CommandExecutor {
     
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        // Verificar se é jogador
+        // Console pode usar apenas /cheque info
         if (!(sender instanceof Player)) {
+            // Console só pode ver informações
+            if (args.length > 0 && (args[0].equalsIgnoreCase("info") || 
+                                     args[0].equalsIgnoreCase("informacao") || 
+                                     args[0].equalsIgnoreCase("economia"))) {
+                handleInfoCommandConsole(sender);
+                return true;
+            }
+            
             sender.sendMessage(plugin.getMessage("player-only"));
             return true;
         }
@@ -53,6 +61,12 @@ public class ChequeCommand implements CommandExecutor {
             case "criar":
             case "create":
                 handleCreateCommand(player, args);
+                break;
+                
+            case "auto":
+            case "automatico":
+            case "media":
+                handleAutoCommand(player, args);
                 break;
                 
             case "info":
@@ -162,6 +176,118 @@ public class ChequeCommand implements CommandExecutor {
     }
     
     /**
+     * Manipula o comando /cheque auto
+     * Cria cheque baseado na média econômica
+     */
+    private void handleAutoCommand(Player player, String[] args) {
+        // Verificar permissão
+        if (!player.hasPermission("serverchecks.criar")) {
+            player.sendMessage(plugin.getMessage("no-permission"));
+            return;
+        }
+        
+        // Verificar inventário
+        if (player.getInventory().firstEmpty() == -1) {
+            player.sendMessage(plugin.getMessage("inventory-full"));
+            return;
+        }
+        
+        // Obter média da economia
+        double average = plugin.getEconomyAnalyzer().getAverage();
+        
+        if (average <= 0) {
+            player.sendMessage(plugin.getMessage("economy-not-loaded"));
+            return;
+        }
+        
+        // Determinar multiplicador baseado nos argumentos
+        double multiplier = 1.0; // Padrão: 1x da média
+        String mode = "media"; // Modo padrão
+        
+        if (args.length > 1) {
+            String option = args[1].toLowerCase();
+            
+            // Opções predefinidas
+            switch (option) {
+                case "baixo":
+                case "low":
+                case "pequeno":
+                    multiplier = 0.5; // 50% da média
+                    mode = "baixo";
+                    break;
+                    
+                case "medio":
+                case "medium":
+                case "media":
+                case "normal":
+                    multiplier = 1.0; // 100% da média
+                    mode = "medio";
+                    break;
+                    
+                case "alto":
+                case "high":
+                case "grande":
+                    multiplier = 2.0; // 200% da média
+                    mode = "alto";
+                    break;
+                    
+                case "muito":
+                case "very":
+                case "extremo":
+                    multiplier = 5.0; // 500% da média
+                    mode = "extremo";
+                    break;
+                    
+                default:
+                    // Tentar interpretar como multiplicador customizado
+                    try {
+                        multiplier = Double.parseDouble(option.replace("x", ""));
+                        if (multiplier <= 0) {
+                            player.sendMessage(plugin.getMessage("invalid-multiplier"));
+                            return;
+                        }
+                        mode = multiplier + "x";
+                    } catch (Exception e) {
+                        player.sendMessage(plugin.getMessage("usage-auto"));
+                        return;
+                    }
+                    break;
+            }
+        }
+        
+        // Calcular valor final
+        double value = average * multiplier;
+        
+        // Arredondar para número mais limpo
+        value = Math.round(value);
+        
+        // Verificar limites
+        double maxValue = plugin.getConfig().getDouble("cheque.maximum-value", -1);
+        if (maxValue > 0 && value > maxValue) {
+            value = maxValue;
+        }
+        
+        double minValue = plugin.getConfig().getDouble("cheque.minimum-value", 1.0);
+        if (value < minValue) {
+            value = minValue;
+        }
+        
+        // Criar mensagem personalizada indicando que é baseado na economia
+        String autoMessage = "Baseado na economia (" + mode + ")";
+        
+        // Criar cheque
+        ItemStack cheque = plugin.getChequeManager().createCheque(player, value, autoMessage);
+        
+        if (cheque != null) {
+            player.getInventory().addItem(cheque);
+            player.sendMessage(plugin.getMessage("cheque-auto-created")
+                    .replace("%value%", plugin.formatMoney(value))
+                    .replace("%mode%", mode)
+                    .replace("%average%", plugin.formatMoney(average)));
+        }
+    }
+    
+    /**
      * Manipula o comando /cheque info
      */
     private void handleInfoCommand(Player player) {
@@ -185,6 +311,26 @@ public class ChequeCommand implements CommandExecutor {
         player.sendMessage(plugin.getMessageRaw("economy-info-players")
                 .replace("%players%", String.valueOf(players)));
         player.sendMessage(plugin.getMessageRaw("economy-info-footer"));
+    }
+    
+    /**
+     * Manipula o comando /cheque info para console
+     */
+    private void handleInfoCommandConsole(CommandSender sender) {
+        // Obter dados
+        double average = plugin.getEconomyAnalyzer().getAverage();
+        double total = plugin.getEconomyAnalyzer().getTotal();
+        int players = plugin.getEconomyAnalyzer().getPlayersAnalyzed();
+        
+        // Enviar mensagens
+        sender.sendMessage(plugin.getMessageRaw("economy-info-header"));
+        sender.sendMessage(plugin.getMessageRaw("economy-info-average")
+                .replace("%average%", plugin.formatMoney(average)));
+        sender.sendMessage(plugin.getMessageRaw("economy-info-total")
+                .replace("%total%", plugin.formatMoney(total)));
+        sender.sendMessage(plugin.getMessageRaw("economy-info-players")
+                .replace("%players%", String.valueOf(players)));
+        sender.sendMessage(plugin.getMessageRaw("economy-info-footer"));
     }
     
     /**
