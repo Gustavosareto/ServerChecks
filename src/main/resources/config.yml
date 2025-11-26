@@ -1,0 +1,91 @@
+# ====================================
+# ServerChecks - Configuração
+# ====================================
+
+# Configurações da análise econômica
+economy-scan:
+  # Ativar/desativar o scanner de economia
+  enabled: true
+  # Intervalo de atualização em minutos
+  interval-minutes: 5
+  # Avisar quando cheque excede X% da média
+  warn-threshold-percentage: 10000  # 10000% = 100x a média
+  # Incluir jogadores offline na análise (pode ser lento)
+  include-offline-players: true
+
+# Configurações dos cheques
+cheque:
+  # Material do cheque (PAPER para 1.8.8)
+  material: PAPER
+  
+  # Usar formato compacto (1k, 200k, 1M, 5.5M, etc)
+  # true = Formato compacto (recomendado)
+  # false = Formato tradicional (usa value-format abaixo)
+  compact-format: true
+  
+  # Símbolo da moeda (usado no formato compacto)
+  currency-symbol: "$"
+  
+  # Formato de exibição do valor (usado apenas se compact-format = false)
+  # Padrões Java DecimalFormat:
+  # "$%,.2f" = $1,234.56 (vírgula separadora, ponto decimal)
+  # "R$ %,.2f" = R$ 1,234.56
+  value-format: "$%,.2f"
+  # Taxa de criação (porcentagem - 0 = sem taxa, 5 = 5%)
+  creation-fee: 0
+  # Valor mínimo para criar cheque
+  minimum-value: 1.0
+  # Valor máximo para criar cheque (-1 = sem limite)
+  maximum-value: -1
+
+# Mensagens do plugin (suporta códigos de cor com &)
+messages:
+  prefix: "&8[&6Rankup Fox&8]&r"
+  
+  # Criação de cheques
+  cheque-created: "&aVocê criou um cheque de &2%value%&a!"
+  insufficient-funds: "&cVocê não tem saldo suficiente! Necessário: &e%required%"
+  invalid-amount: "&cValor inválido! Use um número positivo."
+  below-minimum: "&cO valor mínimo para criar um cheque é &e%minimum%&c."
+  above-maximum: "&cO valor máximo para criar um cheque é &e%maximum%&c."
+  inventory-full: "&cSeu inventário está cheio!"
+  
+  # Resgate de cheques
+  cheque-redeemed: "&aVocê resgatou um cheque de &2%value%&a!"
+  invalid-cheque: "&cEste não é um cheque válido!"
+  
+  # Avisos econômicos
+  economy-warning: "&e⚠ AVISO: O valor está &c%percentage%x &eacima da média da economia (&6%average%&e)!"
+  economy-warning-confirm: "&eDeseja mesmo criar este cheque? Clique novamente em 10 segundos."
+  
+  # Informações
+  economy-info-header: "&8&m----------&r &6Economia do Servidor &8&m----------"
+  economy-info-average: "&eMedia de saldo: &a%average%"
+  economy-info-total: "&eTotal circulante: &a%total%"
+  economy-info-players: "&eJogadores analisados: &a%players%"
+  economy-info-footer: "&8&m----------------------------------------"
+  
+  # Erros gerais
+  no-permission: "&cVocê não tem permissão para isso!"
+  player-only: "&cEste comando só pode ser usado por jogadores!"
+  economy-not-loaded: "&cSistema de economia não disponível!"
+  
+  # Uso dos comandos
+  usage-criar: "&cUso: /cheque criar <valor> [mensagem]"
+  usage-main: "&cUso: /cheque <criar|info>"
+
+# Formato do cheque
+cheque-format:
+  # Nome do item
+  display-name: "&6&lCheque de %value%"
+  # Linhas da lore (descrição)
+  lore:
+    - "&7━━━━━━━━━━━━━━━━━━"
+    - "&eValor: &a%value%"
+    - "&eEmitido por: &f%player%"
+    - "&eData: &7%date%"
+    - "%message%"
+    - "&7━━━━━━━━━━━━━━━━━━"
+    - "&7Clique com botão direito para resgatar"
+  # Formato da linha de mensagem (deixe vazio se não houver mensagem)
+  message-format: "&e&oMensagem: &f&o%message%"

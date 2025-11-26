@@ -1,0 +1,36 @@
+name: ServerChecks
+version: ${project.version}
+main: com.serverchecks.ServerChecks
+author: ServerChecks
+description: Sistema de cheques com análise econômica
+depend: [Vault]
+api-version: 1.13
+
+commands:
+  cheque:
+    description: Comando principal do sistema de cheques
+    aliases: [check, cheques]
+    usage: /<command> <criar|info> [argumentos]
+    permission: serverchecks.use
+
+permissions:
+  serverchecks.use:
+    description: Permite usar comandos básicos do plugin
+    default: true
+  serverchecks.criar:
+    description: Permite criar cheques
+    default: true
+  serverchecks.resgatar:
+    description: Permite resgatar cheques
+    default: true
+  serverchecks.info:
+    description: Permite ver informações da economia
+    default: true
+  serverchecks.admin:
+    description: Acesso administrativo completo
+    default: op
+    children:
+      serverchecks.use: true
+      serverchecks.criar: true
+      serverchecks.resgatar: true
+      serverchecks.info: true

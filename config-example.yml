@@ -1,0 +1,270 @@
+# ====================================
+# ServerChecks - Exemplo de Configuração
+# ====================================
+#
+# Este é um exemplo completo de config.yml com todas as opções
+# comentadas e explicadas em detalhes.
+#
+# Copie e personalize conforme suas necessidades!
+
+# ====================================
+# ANÁLISE ECONÔMICA
+# ====================================
+economy-scan:
+  
+  # Ativar/desativar o scanner de economia automático
+  # true = Ativa análise periódica da economia
+  # false = Desativa (melhor performance, mas sem avisos)
+  enabled: true
+  
+  # Intervalo entre análises em minutos
+  # Valores recomendados:
+  # - Servidor pequeno (< 50 players): 5 minutos
+  # - Servidor médio (50-200 players): 10 minutos
+  # - Servidor grande (> 200 players): 15-30 minutos
+  interval-minutes: 5
+  
+  # Porcentagem acima da média que dispara aviso
+  # 10000% = 100x a média
+  # Exemplo: se média é $1000, aviso para cheques > $100.000
+  # Valores sugeridos:
+  # - Economia estável: 5000-10000 (50x-100x)
+  # - Economia livre: 50000+ (500x+)
+  warn-threshold-percentage: 10000
+  
+  # Incluir jogadores offline na análise
+  # true = Analisa todos (pode ser lento em grandes servidores)
+  # false = Apenas online (mais rápido)
+  # IMPORTANTE: Em servidores com milhares de players offline,
+  # recomenda-se false para melhor performance
+  include-offline-players: true
+
+# ====================================
+# CONFIGURAÇÕES DOS CHEQUES
+# ====================================
+cheque:
+  
+  # Material do item de cheque
+  # 1.8.8: PAPER, BOOK, MAP, etc.
+  # Recomendado: PAPER (papel)
+  material: PAPER
+  
+  # Usar formato compacto para valores monetários
+  # true = Formato compacto e legível:
+  #   - 500 → $500
+  #   - 1000 → $1k
+  #   - 1500 → $1.5k
+  #   - 50000 → $50k
+  #   - 200000 → $200k
+  #   - 1000000 → $1M
+  #   - 5500000 → $5.5M
+  #   - 10000000 → $10M
+  # false = Formato tradicional (usa value-format abaixo)
+  #   - 1000 → $1,000.00
+  #   - 200000 → $200,000.00
+  compact-format: true
+  
+  # Símbolo da moeda (usado no formato compacto)
+  # Exemplos: "$", "R$", "€", "£", "¥", "coins", ""
+  currency-symbol: "$"
+  
+  # Formato de exibição tradicional (usado apenas se compact-format = false)
+  # Padrões Java DecimalFormat:
+  # "$%,.2f" = $1,234.56 (vírgula separadora, ponto decimal)
+  # "R$ %,.2f" = R$ 1,234.56
+  # "%,.0f coins" = 1,234 coins (sem decimais)
+  # "€%,.2f" = €1,234.56
+  value-format: "$%,.2f"
+  
+  # Taxa de criação de cheques (em porcentagem)
+  # 0 = Sem taxa (gratuito)
+  # 5 = Taxa de 5% (criar cheque de $100 custa $105)
+  # 10 = Taxa de 10%
+  # Útil para evitar transferências infinitas sem custo
+  creation-fee: 0
+  
+  # Valor mínimo para criar um cheque
+  # Evita spam de cheques de valores insignificantes
+  # Recomendado: 1-100 dependendo da economia
+  minimum-value: 1.0
+  
+  # Valor máximo para criar um cheque
+  # -1 = Sem limite
+  # Número positivo = Define limite máximo
+  # Ex: 1000000 = Cheques limitados a $1.000.000
+  maximum-value: -1
+
+# ====================================
+# MENSAGENS DO PLUGIN
+# ====================================
+# Todas suportam códigos de cor: &a, &b, &c, etc.
+# &l = negrito, &o = itálico, &n = sublinhado
+messages:
+  
+  # Prefixo padrão de todas as mensagens
+  prefix: "&8[&6ServerChecks&8]&r"
+  
+  # --- CRIAÇÃO DE CHEQUES ---
+  
+  # Sucesso ao criar cheque
+  # %value% = valor formatado do cheque
+  cheque-created: "&aVocê criou um cheque de &2%value%&a!"
+  
+  # Saldo insuficiente
+  # %required% = valor total necessário (valor + taxa)
+  insufficient-funds: "&cVocê não tem saldo suficiente! Necessário: &e%required%"
+  
+  # Valor inválido (não numérico ou negativo)
+  invalid-amount: "&cValor inválido! Use um número positivo."
+  
+  # Valor abaixo do mínimo configurado
+  # %minimum% = valor mínimo configurado
+  below-minimum: "&cO valor mínimo para criar um cheque é &e%minimum%&c."
+  
+  # Valor acima do máximo configurado
+  # %maximum% = valor máximo configurado
+  above-maximum: "&cO valor máximo para criar um cheque é &e%maximum%&c."
+  
+  # Inventário cheio
+  inventory-full: "&cSeu inventário está cheio!"
+  
+  # --- RESGATE DE CHEQUES ---
+  
+  # Sucesso ao resgatar
+  # %value% = valor resgatado
+  cheque-redeemed: "&aVocê resgatou um cheque de &2%value%&a!"
+  
+  # Cheque inválido ou falsificado
+  invalid-cheque: "&cEste não é um cheque válido!"
+  
+  # --- AVISOS ECONÔMICOS ---
+  
+  # Aviso quando valor está muito acima da média
+  # %percentage% = quantas vezes acima da média
+  # %average% = valor médio da economia
+  economy-warning: "&e⚠ AVISO: O valor está &c%percentage%x &eacima da média da economia (&6%average%&e)!"
+  
+  # Mensagem de confirmação
+  economy-warning-confirm: "&eDeseja mesmo criar este cheque? Clique novamente em 10 segundos."
+  
+  # --- INFORMAÇÕES ---
+  
+  economy-info-header: "&8&m----------&r &6Economia do Servidor &8&m----------"
+  
+  # %average% = saldo médio dos jogadores
+  economy-info-average: "&eMedia de saldo: &a%average%"
+  
+  # %total% = total de dinheiro em circulação
+  economy-info-total: "&eTotal circulante: &a%total%"
+  
+  # %players% = número de jogadores analisados
+  economy-info-players: "&eJogadores analisados: &a%players%"
+  
+  economy-info-footer: "&8&m----------------------------------------"
+  
+  # --- ERROS GERAIS ---
+  
+  # Sem permissão para o comando
+  no-permission: "&cVocê não tem permissão para isso!"
+  
+  # Comando usado no console
+  player-only: "&cEste comando só pode ser usado por jogadores!"
+  
+  # Vault não encontrado ou economia não carregada
+  economy-not-loaded: "&cSistema de economia não disponível!"
+  
+  # --- USO DOS COMANDOS ---
+  
+  usage-criar: "&cUso: /cheque criar <valor> [mensagem]"
+  usage-main: "&cUso: /cheque <criar|info>"
+
+# ====================================
+# FORMATO VISUAL DO CHEQUE
+# ====================================
+cheque-format:
+  
+  # Nome do item (aparece quando passa o mouse)
+  # %value% = valor do cheque formatado
+  # &l = negrito
+  display-name: "&6&lCheque de %value%"
+  
+  # Linhas de descrição (lore) do item
+  # Placeholders disponíveis:
+  # %value% = valor formatado
+  # %player% = nome de quem criou
+  # %date% = data/hora de criação
+  # %message% = mensagem personalizada (se houver)
+  lore:
+    - "&7━━━━━━━━━━━━━━━━━━"
+    - "&eValor: &a%value%"
+    - "&eEmitido por: &f%player%"
+    - "&eData: &7%date%"
+    - "%message%"
+    - "&7━━━━━━━━━━━━━━━━━━"
+    - "&7Clique com botão direito para resgatar"
+  
+  # Formato da linha de mensagem
+  # Esta linha só aparece se houver mensagem
+  # %message% = texto da mensagem
+  message-format: "&e&oMensagem: &f&o%message%"
+
+# ====================================
+# EXEMPLOS DE CONFIGURAÇÕES
+# ====================================
+
+# CONFIGURAÇÃO 1: Servidor de Sobrevivência Vanilla
+# economy-scan:
+#   enabled: true
+#   interval-minutes: 5
+#   warn-threshold-percentage: 5000
+#   include-offline-players: true
+# cheque:
+#   material: PAPER
+#   value-format: "$%,.2f"
+#   creation-fee: 1
+#   minimum-value: 10
+#   maximum-value: 100000
+
+# CONFIGURAÇÃO 2: Servidor Skyblock/Economy
+# economy-scan:
+#   enabled: true
+#   interval-minutes: 10
+#   warn-threshold-percentage: 20000
+#   include-offline-players: false
+# cheque:
+#   material: PAPER
+#   value-format: "$%,.0f"
+#   creation-fee: 2
+#   minimum-value: 100
+#   maximum-value: 10000000
+
+# CONFIGURAÇÃO 3: Servidor Minigames (sem limites)
+# economy-scan:
+#   enabled: false
+#   interval-minutes: 30
+#   warn-threshold-percentage: 100000
+#   include-offline-players: false
+# cheque:
+#   material: PAPER
+#   value-format: "%,.0f coins"
+#   creation-fee: 0
+#   minimum-value: 1
+#   maximum-value: -1
+
+# ====================================
+# CORES DISPONÍVEIS
+# ====================================
+# &0 = Preto       &8 = Cinza Escuro
+# &1 = Azul Escuro &9 = Azul
+# &2 = Verde       &a = Verde Claro
+# &3 = Ciano       &b = Ciano Claro
+# &4 = Vermelho    &c = Vermelho Claro
+# &5 = Roxo        &d = Rosa
+# &6 = Dourado     &e = Amarelo
+# &7 = Cinza       &f = Branco
+#
+# &l = Negrito
+# &o = Itálico
+# &n = Sublinhado
+# &m = Tachado
+# &r = Reset (remove formatação)
